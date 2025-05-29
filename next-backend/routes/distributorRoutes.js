@@ -2,11 +2,12 @@
 
 import express from 'express';
 import Distributor from '../models/distributor.js';
+import { isAdmin, protect } from '../protect.js';
 
 const distributorRouter = express.Router();
 
 // POST /api/distributor - Create new distributor
-distributorRouter.post('/distributor', async (req, res) => {
+distributorRouter.post('/', protect ,isAdmin ,async (req, res) => {
   try {
     const distributor = new Distributor(req.body);
     await distributor.save();
@@ -18,7 +19,7 @@ distributorRouter.post('/distributor', async (req, res) => {
 });
 
 // GET /api/distributor - Get all distributors
-distributorRouter.get('/distributor', async (req, res) => {
+distributorRouter.get('/', async (req, res) => {
   try {
     const distributors = await Distributor.find();
     res.status(200).json(distributors);
@@ -29,7 +30,7 @@ distributorRouter.get('/distributor', async (req, res) => {
 });
 
 // GET /api/distributor/:id - Get single distributor by id
-distributorRouter.get('/distributor/:id', async (req, res) => {
+distributorRouter.get('/:id', async (req, res) => {
   try {
     const distributor = await Distributor.findById(req.params.id);
     if (!distributor) {
@@ -43,7 +44,7 @@ distributorRouter.get('/distributor/:id', async (req, res) => {
 });
 
 // PUT /api/distributor/:id - Update distributor by id
-distributorRouter.put('/distributor/:id', async (req, res) => {
+distributorRouter.put('/:id', protect, isAdmin, async (req, res) => {
   try {
     const updatedDistributor = await Distributor.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updatedDistributor) {
@@ -57,7 +58,7 @@ distributorRouter.put('/distributor/:id', async (req, res) => {
 });
 
 // DELETE /api/distributor/:id - Delete distributor by id
-distributorRouter.delete('/distributor/:id', async (req, res) => {
+distributorRouter.delete('/:id',protect, isAdmin, async (req, res) => {
   try {
     const deletedDistributor = await Distributor.findByIdAndDelete(req.params.id);
     if (!deletedDistributor) {
